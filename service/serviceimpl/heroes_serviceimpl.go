@@ -8,11 +8,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type impl struct{}
+type heroesImpl struct{}
 
 // FindOne : Override Method FindOne on HeroesService Interface
-func (implementation *impl) FindOne(heroesReq view.HeroesRequest) (model.Heroes, error) {
-	filter := filterQuery(heroesReq)
+func (implementation *heroesImpl) FindOne(heroesReq view.HeroesRequest) (model.Heroes, error) {
+	filter := filterHeroesQuery(heroesReq)
 	dbOperate := model.DbOperate{
 		Collection: "test",
 		Option:     model.DbOption{},
@@ -23,8 +23,8 @@ func (implementation *impl) FindOne(heroesReq view.HeroesRequest) (model.Heroes,
 }
 
 // FindAll : Override Method FindAll on HeroesService Interface
-func (implementation *impl) FindAll(heroesReq view.HeroesRequest) ([]model.Heroes, error) {
-	filter := filterQuery(heroesReq)
+func (implementation *heroesImpl) FindAll(heroesReq view.HeroesRequest) ([]model.Heroes, error) {
+	filter := filterHeroesQuery(heroesReq)
 	dbOperate := model.DbOperate{
 		Collection: "test",
 		Option:     model.DbOption{},
@@ -34,7 +34,7 @@ func (implementation *impl) FindAll(heroesReq view.HeroesRequest) ([]model.Heroe
 	return data, err
 }
 
-func filterQuery(heroesReq view.HeroesRequest) bson.M {
+func filterHeroesQuery(heroesReq view.HeroesRequest) bson.M {
 	filter := bson.M{}
 	switch heroesReq.FilterType {
 	case "name":
@@ -48,6 +48,6 @@ func filterQuery(heroesReq view.HeroesRequest) bson.M {
 
 // HeroesServiceImpl : Implementation of Interface HeroesService
 func HeroesServiceImpl() service.HeroesService {
-	var service service.HeroesService = &impl{}
+	var service service.HeroesService = &heroesImpl{}
 	return service
 }

@@ -1,4 +1,4 @@
-package daoxxx
+package dao
 
 import (
 	"context"
@@ -10,10 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type impl struct{}
+type chapterImpl struct{}
 
 // FindPage : Override Method FindPage on ChapterDaoInterface
-func (implementation *impl) FindPage(dbOperate model.DbOperate) (model.Chapter, error) {
+func (implementation *chapterImpl) FindPage(dbOperate model.DbOperate) (model.Chapter, error) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// Connection of Database
 	database.MongoDbConnect()
 	defer database.MongoDbDisconnect()
@@ -28,7 +29,8 @@ func (implementation *impl) FindPage(dbOperate model.DbOperate) (model.Chapter, 
 }
 
 // FindChapter : Override Method FindChapter on ChapterDaoInterface
-func (implementation *impl) FindChapter(dbOperate model.DbOperate) ([]model.Chapter, error) {
+func (implementation *chapterImpl) FindChapter(dbOperate model.DbOperate) ([]model.Chapter, error) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// Connection of Database
 	database.MongoDbConnect()
 	defer database.MongoDbDisconnect()
@@ -48,9 +50,9 @@ func (implementation *impl) FindChapter(dbOperate model.DbOperate) ([]model.Chap
 		}
 		dataMapping := data.Map()
 		results = append(results, model.Chapter{
-			Chapter:  dataMapping["chapter"].(string),
-			Page: dataMapping["page"].(string),
-			Link: dataMapping["link"].(bool),
+			Chapter: dataMapping["chapter"].(int32),
+			Page:    dataMapping["page"].(int32),
+			Link:    dataMapping["link"].(string),
 		})
 	}
 
@@ -63,6 +65,6 @@ func (implementation *impl) FindChapter(dbOperate model.DbOperate) ([]model.Chap
 
 // ChapterDaoImpl : Implementation of Interface ChapterDao
 func ChapterDaoImpl() dao.ChapterDao {
-	var dao dao.ChapterDao = &impl{}
+	var dao dao.ChapterDao = &chapterImpl{}
 	return dao
 }

@@ -1,4 +1,4 @@
-package daoxxx
+package dao
 
 import (
 	"context"
@@ -10,10 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type impl struct{}
+type heroesImpl struct{}
 
 // FindOne : Override Method FindOne on HeroesDaoInterface
-func (implementation *impl) FindOne(dbOperate model.DbOperate) (model.Heroes, error) {
+func (implementation *heroesImpl) FindOne(dbOperate model.DbOperate) (model.Heroes, error) {
 	// Connection of Database
 	database.MongoDbConnect()
 	defer database.MongoDbDisconnect()
@@ -28,7 +28,7 @@ func (implementation *impl) FindOne(dbOperate model.DbOperate) (model.Heroes, er
 }
 
 // FindAll : Override Method FindAll on HeroesDaoInterface
-func (implementation *impl) FindAll(dbOperate model.DbOperate) ([]model.Heroes, error) {
+func (implementation *heroesImpl) FindAll(dbOperate model.DbOperate) ([]model.Heroes, error) {
 	// Connection of Database
 	database.MongoDbConnect()
 	defer database.MongoDbDisconnect()
@@ -63,6 +63,6 @@ func (implementation *impl) FindAll(dbOperate model.DbOperate) ([]model.Heroes, 
 
 // HeroesDaoImpl : Implementation of Interface HeroesDao
 func HeroesDaoImpl() dao.HeroesDao {
-	var dao dao.HeroesDao = &impl{}
+	var dao dao.HeroesDao = &heroesImpl{}
 	return dao
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"log"
 
 	dao "github.com/darkarchana/darkarchana-backend/dao/daoimpl"
 	"github.com/darkarchana/darkarchana-backend/model"
@@ -10,44 +11,48 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type impl struct{}
+type chapterImpl struct{}
 
 // FindPage : Override Method FindPage on ChapterService Interface
-func (implementation *impl) FindPage(chapterReq view.ChapterRequest) (view.Chapter, error) {
-	filter, err := filterQuery(chapterReq)
+func (implementation *chapterImpl) FindPage(chapterReq view.ChapterRequest) (view.Chapter, error) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	filter, err := filterChapterQuery(chapterReq)
 	if err != nil {
-		dbOperate := model.DbOperate{
-			Collection: "manga",
-			Option:     model.DbOption{},
-			Filter:     filter,
-		}
-		data, err := dao.ChapterDaoImpl().FindPage(dbOperate)
-		view := modelToView(data)
-		return view, err
+		return view.Chapter{}, err
 	}
-	return view.Chapter{}, err
+	dbOperate := model.DbOperate{
+		Collection: chapterReq.Title,
+		Option:     model.DbOption{},
+		Filter:     filter,
+	}
+	data, err := dao.ChapterDaoImpl().FindPage(dbOperate)
+	view := modelToView(data)
+	return view, err
+
 }
 
 // FindChapter: Override Method FindChapter on ChapterService Interface
-func (implementation *impl) FindChapter(chapterReq view.ChapterRequest) ([]view.Chapter, error) {
-	filter, err := filterQuery(chapterReq)
+func (implementation *chapterImpl) FindChapter(chapterReq view.ChapterRequest) ([]view.Chapter, error) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	filter, err := filterChapterQuery(chapterReq)
 	if err != nil {
-		dbOperate := model.DbOperate{
-			Collection: "manga",
-			Option:     model.DbOption{},
-			Filter:     filter,
-		}
-		data, err := dao.ChapterDaoImpl().FindChapter(dbOperate)
-		views := modelsToViews(data)
-		return views, err
+		return []view.Chapter{}, err
 	}
-	return []view.Chapter{}, err
+	dbOperate := model.DbOperate{
+		Collection: chapterReq.Title,
+		Option:     model.DbOption{},
+		Filter:     filter,
+	}
+	data, err := dao.ChapterDaoImpl().FindChapter(dbOperate)
+	views := modelsToViews(data)
+	return views, err
+
 }
 
-func filterQuery(chapterReq view.ChapterRequest) (bson.M, error) {
+func filterChapterQuery(chapterReq view.ChapterRequest) (bson.M, error) {
 	filter := bson.M{}
-	if chapterReq.Chapter.Num > 0 {
-		filter["chapter"] = chapterReq.Chapter.Num
+	if chapterReq.Chapter.Chapter > 0 {
+		filter["chapter"] = chapterReq.Chapter.Chapter
 	} else {
 		return nil, errors.New("No Chapter Selected")
 	}
@@ -59,7 +64,7 @@ func filterQuery(chapterReq view.ChapterRequest) (bson.M, error) {
 }
 
 func modelsToViews(models []model.Chapter) []view.Chapter {
-	views := []view.Chapter 
+	views := []view.Chapter{}
 	for _, v := range models {
 		views = append(views, modelToView(v))
 	}
@@ -67,16 +72,16 @@ func modelsToViews(models []model.Chapter) []view.Chapter {
 }
 
 func modelToView(model model.Chapter) view.Chapter {
-	view := view.Chapter {
+	view := view.Chapter{
 		Chapter: model.Chapter,
-		Page: model.Page,
-		Link: model.link,
+		Page:    model.Page,
+		Link:    model.Link,
 	}
 	return view
 }
 
 // ChapterServiceImpl : Implementation of Interface ChapterService
 func ChapterServiceImpl() service.ChapterService {
-	var service service.ChapterService = &impl{}
+	var service service.ChapterService = &chapterImpl{}
 	return service
 }
