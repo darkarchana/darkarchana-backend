@@ -1,0 +1,68 @@
+package daoxxx
+
+import (
+	"context"
+	"log"
+
+	"github.com/darkarchana/darkarchana-backend/dao"
+	"github.com/darkarchana/darkarchana-backend/database"
+	"github.com/darkarchana/darkarchana-backend/model"
+	"go.mongodb.org/mongo-driver/bson"
+)
+
+type impl struct{}
+
+// FindPage : Override Method FindPage on ChapterDaoInterface
+func (implementation *impl) FindPage(dbOperate model.DbOperate) (model.Chapter, error) {
+	// Connection of Database
+	database.MongoDbConnect()
+	defer database.MongoDbDisconnect()
+
+	var result model.Chapter
+	err := database.MongoDbFindOne(dbOperate).Decode(&result)
+	if err != nil {
+		log.Print(err)
+		return result, err
+	}
+	return result, nil
+}
+
+// FindChapter : Override Method FindChapter on ChapterDaoInterface
+func (implementation *impl) FindChapter(dbOperate model.DbOperate) ([]model.Chapter, error) {
+	// Connection of Database
+	database.MongoDbConnect()
+	defer database.MongoDbDisconnect()
+
+	var results []model.Chapter
+	cur, err := database.MongoDbFind(dbOperate)
+	if err != nil {
+		log.Print(err)
+	}
+
+	for cur.Next(context.TODO()) {
+		// create a value into which the single document can be decoded
+		data := &bson.D{}
+		err := cur.Decode(&data)
+		if err != nil {
+			log.Print(err)
+		}
+		dataMapping := data.Map()
+		results = append(results, model.Chapter{
+			Chapter:  dataMapping["chapter"].(string),
+			Page: dataMapping["page"].(string),
+			Link: dataMapping["link"].(bool),
+		})
+	}
+
+	if err := cur.Err(); err != nil {
+		log.Print(err)
+	}
+
+	return results, err
+}
+
+// ChapterDaoImpl : Implementation of Interface ChapterDao
+func ChapterDaoImpl() dao.ChapterDao {
+	var dao dao.ChapterDao = &impl{}
+	return dao
+}
