@@ -14,6 +14,8 @@ import (
 func main() {
 
 	if generalutil.SetupCheck() {
+		credentialOk := handlers.AllowCredentials()
+		exposedHeadersOk := handlers.ExposedHeaders([]string{"*"})
 		headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 		originsOk := handlers.AllowedOrigins([]string{"*"})
 		methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
@@ -27,6 +29,6 @@ func main() {
 
 		database.MongoDbSetup()
 		log.Println("Listening on localhost:" + port)
-		http.ListenAndServe(":"+port, handlers.CORS(headersOk, originsOk, methodsOk)(mux))
+		http.ListenAndServe(":"+port, handlers.CORS(credentialOk, exposedHeadersOk, headersOk, originsOk, methodsOk)(mux))
 	}
 }
