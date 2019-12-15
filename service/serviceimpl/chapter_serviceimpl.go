@@ -38,14 +38,15 @@ func (implementation *chapterImpl) FindPage(chapterReq view.ChapterRequest) (vie
 // FindChapter: Override Method FindChapter on ChapterService Interface
 func (implementation *chapterImpl) FindChapter(chapterReq view.ChapterRequest) ([]view.Chapter, error) {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	filter, err := filterChapterQuery(chapterReq)
-	if err != nil {
-		return []view.Chapter{}, err
-	}
+	// filter, err := filterChapterQuery(chapterReq)
+
+	// if err != nil {
+	// 	return []view.Chapter{}, err
+	// }
 	dbOperate := model.DbOperate{
-		Collection: chapterReq.Title,
+		Collection: "blue_lock",
 		Option:     model.DbOption{},
-		Filter:     filter,
+		Filter:     bson.D{{}},
 	}
 	data, err := dao.ChapterDaoImpl().FindChapter(dbOperate)
 	views := modelsToViews(data)

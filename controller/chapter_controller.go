@@ -52,6 +52,16 @@ func Chapter() http.HandlerFunc {
 				status.Response = "Request is not Valid"
 			}
 
+			data, err := service.ChapterServiceImpl().FindChapter(clientReq)
+			if err != nil {
+				log.Print(err)
+				status.Code = http.StatusBadRequest
+				status.Response = err
+			} else {
+				status.Code = http.StatusOK
+				status.Response = data
+			}
+
 			w.Header().Set("Content-Type", "application/json")
 			addCorsHeader(w)
 			w.WriteHeader(status.Code)
