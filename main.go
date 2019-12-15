@@ -8,6 +8,7 @@ import (
 	"github.com/darkarchana/darkarchana-backend/api"
 	"github.com/darkarchana/darkarchana-backend/database"
 	"github.com/darkarchana/darkarchana-backend/generalutil"
+	"github.com/gorilla/handlers"
 )
 
 func main() {
@@ -22,6 +23,6 @@ func main() {
 
 		database.MongoDbSetup()
 		log.Println("Listening on localhost:" + port)
-		http.ListenAndServe(":"+port, mux)
+		http.ListenAndServe(":"+port, handlers.CORS()(mux))
 	}
 }
