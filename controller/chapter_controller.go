@@ -50,6 +50,7 @@ func Chapter() http.HandlerFunc {
 			}
 
 			w.Header().Set("Content-Type", "application/json")
+			addCorsHeader(w)
 			w.WriteHeader(status.Code)
 			if err != nil {
 				log.Print(err)
@@ -63,4 +64,14 @@ func Chapter() http.HandlerFunc {
 			}
 		}
 	}
+}
+
+func addCorsHeader(w http.ResponseWriter) {
+	headers := w.Header()
+	headers.Add("Access-Control-Allow-Origin", "*")
+	headers.Add("Vary", "Origin")
+	headers.Add("Vary", "Access-Control-Request-Method")
+	headers.Add("Vary", "Access-Control-Request-Headers")
+	headers.Add("Access-Control-Allow-Headers", "Content-Type, Origin, Accept, token")
+	headers.Add("Access-Control-Allow-Methods", "GET, POST,OPTIONS")
 }
