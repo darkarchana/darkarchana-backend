@@ -10,5 +10,6 @@ func Routing() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ping", controller.Ping())
 	mux.HandleFunc("/heroes", controller.Heroes())
+	mux.HandleFunc("/chapter", controller.Chapter())
 	return mux
 }

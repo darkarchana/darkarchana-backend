@@ -10,15 +10,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type heroesImpl struct{}
+type chapterImpl struct{}
 
-// FindOne : Override Method FindOne on HeroesDaoInterface
-func (implementation *heroesImpl) FindOne(dbOperate model.DbOperate) (model.Heroes, error) {
+// FindPage : Override Method FindPage on ChapterDaoInterface
+func (implementation *chapterImpl) FindPage(dbOperate model.DbOperate) (model.Chapter, error) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// Connection of Database
 	database.MongoDbConnect()
 	defer database.MongoDbDisconnect()
 
-	var result model.Heroes
+	var result model.Chapter
 	err := database.MongoDbFindOne(dbOperate).Decode(&result)
 	if err != nil {
 		log.Print(err)
@@ -27,13 +28,14 @@ func (implementation *heroesImpl) FindOne(dbOperate model.DbOperate) (model.Hero
 	return result, nil
 }
 
-// FindAll : Override Method FindAll on HeroesDaoInterface
-func (implementation *heroesImpl) FindAll(dbOperate model.DbOperate) ([]model.Heroes, error) {
+// FindChapter : Override Method FindChapter on ChapterDaoInterface
+func (implementation *chapterImpl) FindChapter(dbOperate model.DbOperate) ([]model.Chapter, error) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// Connection of Database
 	database.MongoDbConnect()
 	defer database.MongoDbDisconnect()
 
-	var results []model.Heroes
+	var results []model.Chapter
 	cur, err := database.MongoDbFind(dbOperate)
 	if err != nil {
 		log.Print(err)
@@ -47,10 +49,10 @@ func (implementation *heroesImpl) FindAll(dbOperate model.DbOperate) ([]model.He
 			log.Print(err)
 		}
 		dataMapping := data.Map()
-		results = append(results, model.Heroes{
-			Name:   dataMapping["name"].(string),
-			Alias:  dataMapping["alias"].(string),
-			Signed: dataMapping["signed"].(bool),
+		results = append(results, model.Chapter{
+			Chapter: dataMapping["chapter"].(int32),
+			Page:    dataMapping["page"].(int32),
+			Link:    dataMapping["link"].(string),
 		})
 	}
 
@@ -61,8 +63,8 @@ func (implementation *heroesImpl) FindAll(dbOperate model.DbOperate) ([]model.He
 	return results, err
 }
 
-// HeroesDaoImpl : Implementation of Interface HeroesDao
-func HeroesDaoImpl() dao.HeroesDao {
-	var dao dao.HeroesDao = &heroesImpl{}
+// ChapterDaoImpl : Implementation of Interface ChapterDao
+func ChapterDaoImpl() dao.ChapterDao {
+	var dao dao.ChapterDao = &chapterImpl{}
 	return dao
 }
