@@ -50,6 +50,7 @@ func Chapter() http.HandlerFunc {
 			}
 
 			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(status.Code)
 			if err != nil {
 				log.Print(err)
