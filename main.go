@@ -15,7 +15,7 @@ func main() {
 
 	if generalutil.SetupCheck() {
 		headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
-		originsOk := handlers.AllowedOrigins([]string{"*"})
+		originsOk := handlers.AllowedOrigins([]string{"http://localhost:3000"})
 		methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 		mux := api.Routing()
