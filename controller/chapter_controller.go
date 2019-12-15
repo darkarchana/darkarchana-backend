@@ -15,7 +15,10 @@ func Chapter() http.HandlerFunc {
 		var clientReq view.ChapterRequest
 		var status view.Status
 
-		if r.Method == http.MethodGet {
+		if r.Method == http.MethodOptions {
+			addCorsHeader(w)
+			w.WriteHeader(status.Code)
+		} else if r.Method == http.MethodGet {
 			err := json.NewDecoder(r.Body).Decode(&clientReq)
 			if err != nil {
 				log.Print(err)
